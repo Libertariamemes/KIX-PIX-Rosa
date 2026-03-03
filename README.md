@@ -1,38 +1,65 @@
-# 🛡️ KIX Soberano: Multi-Instance SaaS over Tor
+# 🛡️ KIX Soberano
+### Multi-Instance SaaS Orchestrator over Tor
 
-KIX Soberano is an automated orchestrator for deploying isolated instances of Bitcoin and Lightning Network infrastructure via the Tor network. With a single command, the script provisions a complete ecosystem (Dashboard, Wallet Engine, and Key Vault) accessible globally through .onion addresses.
+**KIX Soberano** is an automated tool for deploying isolated, sovereign instances of Bitcoin and Lightning Network infrastructure. By leveraging the Tor network, it ensures that every deployment is "shielded" and accessible globally via private `.onion` addresses.
+
+---
 
 ## 🏗️ System Architecture
-Each instance is encapsulated within its own directory and virtual network, enabling horizontal scalability (SaaS) on the same hardware:
+The system utilizes Docker encapsulation to provide horizontal scalability on a single host. Each instance contains:
 
-* **Dashboard (Homepage):** A centralized entry point for the user.
-* **Engine (LNbits):** A robust and extensible Lightning payment processor.
-* **Vault (Alby Hub):** Sovereign key management and Lightning node connection.
-* **Tor Bridge:** A dedicated Alpine container that routes traffic from each service to the Onion network, generating unique URLs in real-time.
+* **Dashboard:** A centralized web interface (Homepage) for management.
+* **Engine (LNbits):** A powerful Lightning Network payment processor.
+* **Vault (Alby Hub):** Secure key management and node connectivity.
+* **Tor Bridge:** An Alpine-based routing container that generates unique Onion URLs in real-time.
 
-## 🚀 How to Use
+---
+
+## 🚀 Getting Started
 
 ### 1. Requirements
-* Docker and Docker Compose installed.
-* `sudo` privileges for volume manipulation and reading Tor hostnames.
+* **Docker & Docker Compose** installed and running.
+* **Sudo privileges** (required for volume management and reading Tor hostnames).
+* **Entropy:** If Tor is slow to generate keys, run `sudo apt install haveged`.
 
 ### 2. Installation
-Clone this repository and grant execution permissions to the script:
-
+Clone the repository and prepare the orchestrator:
 ```bash
 chmod +x kix_saas_rebuild.sh
-
-
+```
 ### 3. Provisioning an Instance
-To create or rebuild instance v7, for example:
+To deploy or reset a specific instance (e.g., instance number 7), run:
 
 ```bash
 ./kix_saas_rebuild.sh 7
+```
 
+O Gemini disse
+Markdown
 
-### 🌐 Accessing Your Instance
-Once the script completes, it will output unique `.onion` addresses for your Dashboard, Engine, and Vault.
+### 3. Provisioning an Instance
+To deploy or reset a specific instance (e.g., instance number 7), run:
 
-1. **Save these addresses:** Store them in a safe place, as they are your only way to access the sovereign infrastructure.
-2. **Use Tor Browser:** These URLs are only accessible via the **Tor Browser** or a browser configured to use the Tor proxy.
-3. **Wait for Propagation:** It may take 1–2 minutes after the containers start for the Tor network to fully propagate the new hidden service addresses.
+```bash
+./kix_saas_rebuild.sh 7
+```
+The script automates the following:
+
+    Cleans up any legacy data or containers for that ID.
+
+    Builds the isolated directory tree.
+
+    Initializes the Tor Bridge and waits for cryptographic key generation.
+
+    Dynamic Address Injection: Automatically captures the new .onion URLs and updates the Dashboard configuration.
+
+🌐 How to Access
+
+Because this infrastructure is focused on privacy, it is not accessible via standard browsers.
+
+    Capture the Output: The script will display your unique addresses upon completion.
+
+    Use Tor Browser: Paste the .onion URLs into the Tor Browser.
+
+    Propagation: Allow 1–2 minutes for the Tor network to recognize the new hidden services.
+
