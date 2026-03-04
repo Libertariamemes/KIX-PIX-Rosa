@@ -42,8 +42,8 @@ sudo apt install haveged
 | :--- | :--- | :--- |
 | 1. **Sovereign** | kix_tor_sovereign.sh | 🌑 Maximum Secession, Tor (.onion). Bypasses all NAT/Firewalls. |
 | 2. **Dedicated** | kix_vps_dedicated.sh | 🌍 Public, High Performance, Clearnet (Port 80). VPS is dedicated. |
-| 3. **Shared** | kix_vps_shared.sh | 🧱 Flexible, Shared Servers, Custom ports. Optimized for Tailscale/VPN. |
-| 4. **Bridge** | kix_vps_bridge.sh | 🌉 Hybrid, Local-to-Cloud. Exposes home node via Public VPS. |
+| 3.1 **Shared** | kix_vps_shared.sh | 🧱 Flexible, Shared Servers, Custom ports. Optimized for Tailscale/VPN. |
+| 3.2 **Bridge** | kix_vps_bridge.sh | 🌉 Hybrid, Local-to-Cloud. Exposes home node via Public VPS. |
 
 ---
 
