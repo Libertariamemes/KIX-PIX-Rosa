@@ -1,5 +1,10 @@
 # ⚡ KIX Deployment Suite: The Sovereign Shadow Layer
 
+![Bitcoin](https://img.shields.io/badge/Bitcoin-Lightning-orange)
+![Docker](https://img.shields.io/badge/Docker-Required-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
+![Privacy](https://img.shields.io/badge/Focus-Sovereignty-black)
+
 KIX is a **Commercial Sovereignty Framework** designed to transition merchants from centralized, monitored rails to the Bitcoin Lightning Network. It is engineered to mimic the user experience of Brazil's Pix, effectively acting as a "Parallel Pixel" that bypasses financial surveillance and arbitrary banking freezes.
 
 🌐 General information and documentation:  
@@ -18,6 +23,30 @@ In Brazil, the state performed the largest mass training in history: teaching 15
 ---
 
 # 🏗️ System Architecture
+
+                    ┌────────────────────────────┐
+                    │        Merchant UI         │
+                    │   (KIX Dashboard-homepage) │
+                    └─────────┬──────────────────┘
+                              │
+                              ▼
+                    ┌───────────────────┐
+                    │      LNbits       │
+                    │  Payment Engine   │
+                    └─────────┬─────────┘
+                              │
+                              ▼
+                    ┌───────────────────┐
+                    │  Lightning Node   │
+                    │ Phoenixd / Alby   │
+                    └─────────┬─────────┘
+                              │
+                ┌─────────────┴─────────────┐
+                │                           │
+                ▼                           ▼
+        Tor Hidden Service          VPS Gateway
+          (.onion access)           (Port 80)
+
 
 The system utilizes Docker encapsulation to provide horizontal scalability on a single host. Each instance contains:
 
@@ -53,7 +82,8 @@ Docker must be installed and running before executing any deployment scripts.
 | :--- | :--- | :--- |
 | 1. **Sovereign** | kix_tor_sovereign.sh | 🌑 Maximum Secession, Tor (.onion). Runs LNbits with **Alby Hub**. Requires configuring the **Nostr key from AlbyHub inside LNbits**. |
 | 2. **Phoenixd** | kix_phoenixd.sh | 🔥 Ultra-lightweight multi-instance Phoenix node + LNbits + Tor. |
-| 3. **Dedicated + Bridge Option** | kix_vps_dedicated.sh + kix_vps_bridge.sh | 🌍 Public + Hybrid mode. These two scripts form **one deployment strategy** and must be executed **one after the other**. |
+| 3. **Dedicated VPS** | kix_vps_dedicated.sh | 🌍 Public clearnet deployment on a dedicated VPS (Port 80). |
+| 4. **Shared VPS + Bridge** | kix_vps_shared.sh + kix_vps_bridge.sh | 🌉 Hybrid architecture exposing a home node through a VPS using a secure tunnel. |
 
 ---
 
@@ -81,7 +111,8 @@ sudo chmod +x kix_phoenixd.sh
 
 ### How it works
 
-* **Isolation**  
+**Isolation**
+
 Creates a directory like:
 
 ```
@@ -90,14 +121,35 @@ Creates a directory like:
 
 Each instance has unique Docker volumes preventing collisions.
 
-* **Credentials**  
+### Automatic LNbits Configuration
+
+The `kix_phoenixd.sh` script automatically configures **LNbits** with the correct **Phoenixd API endpoint and password**.
+
+After deployment:
+
+* LNbits is already connected to the Phoenix node
+* The wallet is ready to **generate Lightning invoices immediately**
+* No manual API configuration is required
+
+### Important
+
+Phoenix automatically opens its **first Lightning channel** when the wallet receives funds.
+
+⚠️ The **first ~20,000 sats** are used by **ACINQ** to open the initial channel.
+
+For this reason it is **critical to safely store the Phoenix seed words**.  
+The seed is the only way to recover the wallet and its funds if the node or server is lost.
+
+**Credentials**
+
 The script generates:
 
 * a **16-hex API password**
 * `.env` file
 * `env_backup.txt`
 
-* **Discovery**  
+**Discovery**
+
 The script scans Docker volumes to locate:
 
 ```
@@ -145,28 +197,9 @@ Allow **1–2 minutes** for Tor circuit propagation.
 
 ---
 
-# 2.3 The Dedicated + Bridge VPS Method
+# 2.3 Dedicated VPS Method (Clearnet)
 
-This deployment mode is a **two-stage architecture** designed for users who run a node at home but want **public Lightning access through a VPS**.
-
-The scripts must be executed **one after the other**.
-
-| Step | Script | Purpose |
-|---|---|---|
-| 1 | `kix_vps_dedicated.sh` | Deploys the **public KIX stack on the VPS (Port 80)** |
-| 2 | `kix_vps_bridge.sh` | Creates the **secure tunnel exposing your home node through the VPS** |
-
-This creates a **Hybrid Lightning topology**:
-This bridge is designed to operate over a **WireGuard-based tunnel** (for example **Tailscale**).
-
-The **user must configure the WireGuard/Tailscale connection manually** between the VPS and the home machine before running the bridge.
-
-⚠️ The KIX scripts **do not configure the WireGuard network automatically**.  
-They assume the secure tunnel already exists.
-
-```
-Home Node  →  Encrypted Bridge  →  Public VPS Gateway
-```
+Use this when the VPS is **dedicated exclusively to KIX** and you want maximum performance on **Port 80**.
 
 ### Run
 
@@ -178,7 +211,46 @@ sudo chmod +x kix_vps_dedicated.sh
 ./kix_vps_dedicated.sh 1
 ```
 
-Then run the bridge:
+---
+
+# 2.4 Shared VPS + Bridge Method (Hybrid)
+
+This architecture allows you to run the **Lightning node at home** while exposing services through a **public VPS gateway**.
+
+The scripts must be executed **in this order**:
+
+| Step | Script | Purpose |
+|---|---|---|
+| 1 | `kix_vps_shared.sh` | Deploys the public gateway on the VPS |
+| 2 | `kix_vps_bridge.sh` | Connects the home node to the VPS |
+
+This creates a hybrid topology:
+
+```
+Home Node → Secure Tunnel → Public VPS Gateway
+```
+
+### WireGuard / Tailscale Requirement
+
+This bridge is designed to operate over a **WireGuard-based tunnel** (for example **Tailscale**).
+
+The **user must configure the WireGuard/Tailscale connection manually** between the VPS and the home machine before running the bridge.
+
+⚠️ The KIX scripts **do not configure the WireGuard network automatically**.
+
+They assume the secure tunnel already exists.
+
+### Run
+
+```bash
+sudo chmod +x kix_vps_shared.sh
+```
+
+```bash
+./kix_vps_shared.sh
+```
+
+Then start the bridge:
 
 ```bash
 sudo chmod +x kix_vps_bridge.sh
