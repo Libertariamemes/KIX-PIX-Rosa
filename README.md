@@ -35,7 +35,6 @@ The system utilizes Docker encapsulation to provide horizontal scalability on a 
 * **Docker**
 * **Docker Compose**
 * **Sudo privileges** (required for volume management and reading Tor hostnames)
-* **OpenSSL** for generating secure API credentials
 * **Entropy helper (optional but recommended for Tor)**
 
 If Tor is slow generating keys:
@@ -158,6 +157,12 @@ The scripts must be executed **one after the other**.
 | 2 | `kix_vps_bridge.sh` | Creates the **secure tunnel exposing your home node through the VPS** |
 
 This creates a **Hybrid Lightning topology**:
+This bridge is designed to operate over a **WireGuard-based tunnel** (for example **Tailscale**).
+
+The **user must configure the WireGuard/Tailscale connection manually** between the VPS and the home machine before running the bridge.
+
+⚠️ The KIX scripts **do not configure the WireGuard network automatically**.  
+They assume the secure tunnel already exists.
 
 ```
 Home Node  →  Encrypted Bridge  →  Public VPS Gateway
