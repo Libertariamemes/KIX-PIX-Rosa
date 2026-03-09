@@ -1,4 +1,3 @@
-````markdown
 # ⚡ KIX Deployment Suite: The Sovereign Shadow Layer
 
 KIX is a **Commercial Sovereignty Framework** designed to transition merchants from centralized, monitored rails to the Bitcoin Lightning Network. It is engineered to mimic the user experience of Brazil's Pix, effectively acting as a "Parallel Pixel" that bypasses financial surveillance and arbitrary banking freezes.
@@ -250,4 +249,3 @@ self-custody
 privacy
 sovereignty
 ```
-````
