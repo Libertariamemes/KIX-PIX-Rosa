@@ -1,117 +1,327 @@
-# ⚡ KIX Deployment Suite: A Camada Sombra Soberana
+# ⚡ KIX Deployment Suite: The Sovereign Shadow Layer
 
-KIX é um **Framework de Soberania Comercial** projetado para migrar comerciantes de trilhos centralizados e monitorados para a Lightning Network do Bitcoin. Ele é desenvolvido para imitar a experiência de usuário do Pix brasileiro, atuando efetivamente como um "Pixel Paralelo" que contorna a vigilância financeira e bloqueios bancários arbitrários.
+![Bitcoin](https://img.shields.io/badge/Bitcoin-Lightning-orange)
+![Docker](https://img.shields.io/badge/Docker-Required-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
+![Privacy](https://img.shields.io/badge/Focus-Sovereignty-black)
 
----
+KIX é um **Framework de Soberania Comercial** projetado para permitir que comerciantes façam a transição de sistemas centralizados e monitorados para a rede Bitcoin Lightning. Ele foi projetado para imitar a experiência de uso do Pix no Brasil, funcionando efetivamente como um **“Pixel Paralelo”** que contorna vigilância financeira e bloqueios arbitrários de bancos.
 
-## 🇧🇷 A Estratégia "Pix": Hackeando a Cognição
-
-No Brasil, o Estado realizou o maior treinamento em massa da história: ensinou 150 milhões de pessoas a usar QR codes para pagamentos instantâneos. O KIX captura essa doutrina.
-
-* **Mimetismo:** O KIX não pede que os usuários aprendam "cripto". Ele pede que "Escaneiem o Pixel Rosa".
-* **Secessão Econômica:** Ao aproveitar o hábito do fluxo do Pix, o KIX substitui a supervisão do Banco Central por um mecanismo peer-to-peer na Lightning.
-* **Alinhamento de Incentivos:** "Por que dar 8% ao banco e ao Estado quando você pode ficar com 5% e dar 3% ao cliente em pontos de dinheiro sólido?"
+🌐 Informações gerais e documentação:  
+https://satoshicanvas.com/kix-eng/
 
 ---
 
-## 🏗️ Arquitetura do Sistema
+# 🇧🇷 A Estratégia do "Pix": Engenharia Cognitiva
 
-O sistema utiliza encapsulamento em Docker para fornecer escalabilidade horizontal em um único host. Cada instância contém:
+No Brasil, o Estado realizou o maior treinamento em massa da história: ensinou mais de 150 milhões de pessoas a usar QR codes para pagamentos instantâneos. O KIX captura essa doutrina.
 
-* **Dashboard:** Uma interface web centralizada (Homepage) para gerenciamento.
-* **Engine (LNbits):** Um poderoso processador de pagamentos na Lightning Network.
-* **Cofre (Alby Hub):** Gerenciamento seguro de chaves e conectividade com o nó.
-* **Ponte Tor:** Um contêiner baseado em Alpine que gera URLs Onion exclusivas em tempo real.
+* **Mimetismo:** O KIX não pede que o usuário aprenda “cripto”. Ele apenas pede que **escaneie o Pixel Rosa**.
+* **Secessão Econômica:** Aproveitando o hábito do fluxo do Pix, o KIX substitui a supervisão do Banco Central por um motor de pagamentos peer-to-peer baseado em Lightning.
+* **Alinhamento de Incentivos:** “Por que dar 8% para o banco e para o Estado quando você pode ficar com 5% e dar 3% ao cliente em pontos de dinheiro sólido?”
 
 ---
 
-## 🚀 Primeiros Passos
+# 🏗️ Arquitetura do Sistema
 
-### 1. Requisitos
-* **Docker & Docker Compose** instalados e em execução.
-* **Privilégios de sudo** (necessários para gerenciamento de volumes e leitura dos hostnames do Tor).
-* **Entropia:** Se o Tor estiver lento para gerar chaves, execute:
+                    ┌────────────────────────────┐
+                    │        Merchant UI         │
+                    │   (KIX Dashboard-homepage) │
+                    └─────────┬──────────────────┘
+                              │
+                              ▼
+                    ┌───────────────────┐
+                    │      LNbits       │
+                    │  Payment Engine   │
+                    └─────────┬─────────┘
+                              │
+                              ▼
+                    ┌───────────────────┐
+                    │  Lightning Node   │
+                    │ Phoenixd / Alby   │
+                    └─────────┬─────────┘
+                              │
+                ┌─────────────┴─────────────┐
+                │                           │
+                ▼                           ▼
+        Tor Hidden Service          VPS Gateway
+          (.onion access)           (Port 80)
 
+O sistema utiliza encapsulamento com Docker para fornecer **escalabilidade horizontal em um único host**. Cada instância contém:
+
+* **Dashboard:** Interface web centralizada (Homepage) para gerenciamento.
+* **Engine (LNbits):** Um poderoso processador de pagamentos Lightning.
+* **Vault (Phoenixd / Alby Hub):** Gerenciamento seguro de chaves e conexão com nó Lightning leve.
+* **Tor Bridge:** Container baseado em Alpine que gera URLs Onion únicas em tempo real.
+
+---
+
+# 🚀 Primeiros Passos
+
+## 1. Requisitos
+
+* **Docker**
+* **Docker Compose**
+* **Privilégios sudo** (necessários para gerenciamento de volumes e leitura dos hostnames do Tor)
+* **Gerador de entropia (opcional, mas recomendado para Tor)**
+
+Se o Tor estiver demorando para gerar chaves:
+
+```bash
 sudo apt install haveged
+```
 
-### 2. Métodos de Instalação & Deploy
+O Docker deve estar instalado e em execução antes de executar qualquer script de deploy.
+
+---
+
+# 2. Métodos de Instalação e Deploy
 
 | Método | Script | Descrição |
 | :--- | :--- | :--- |
-| 1. **Soberano** | kix_tor_sovereign.sh | 🌑 Secessão Máxima, Tor (.onion). Contorna todos NATs/Firewalls. |
-| 2. **Dedicado** | kix_vps_dedicated.sh | 🌍 Público, Alto Desempenho, Clearnet (Porta 80). VPS dedicada. |
-| 3. **Compartilhado** | kix_vps_shared.sh | 🧱 Flexível, Servidores Compartilhados, Portas customizadas. Otimizado para Tailscale/VPN. |
-| 4. **Ponte** | kix_vps_bridge.sh | 🌉 Híbrido, Local-para-Nuvem. Expõe o nó doméstico via VPS Pública. |
+| 1. **Soberano** | kix_tor_sovereign.sh | 🌑 Máxima secessão, Tor (.onion). Executa LNbits com **Alby Hub**. Requer configurar a **chave Nostr do AlbyHub dentro do LNbits**. |
+| 2. **Phoenixd** | kix_phoenixd.sh | 🔥 Nó Phoenix multi-instância ultra leve + LNbits + Tor. |
+| 3. **VPS Dedicado** | kix_vps_dedicated.sh | 🌍 Deploy público em clearnet em um VPS dedicado (porta 80). |
+| 4. **VPS Compartilhado + Bridge** | kix_vps_shared.sh + kix_vps_bridge.sh | 🌉 Arquitetura híbrida que expõe um nó doméstico através de um VPS usando um túnel seguro. |
 
 ---
 
-### 2.1 Método Soberano (Tor)
+# 2.1 Método Phoenixd Multi-Hunter (Recomendado)
 
-O script automatiza a limpeza, criação de diretórios, inicialização da Ponte Tor e injeção dinâmica de URLs no dashboard.
+Este método utiliza o orquestrador `kix_phoenixd.sh` para implantar nós Phoenix isolados. Ele inclui gerenciamento automático de volumes e backups de ambiente.
 
-Execute:
+### Setup
 
+```bash
+sudo chmod +x kix_phoenixd.sh
+```
+
+### Implantar Instância (padrão v1)
+
+```bash
+./kix_phoenixd.sh v1
+```
+
+### Implantar Instância "v8"
+
+```bash
+./kix_phoenixd.sh v8
+```
+
+### Como funciona
+
+**Isolamento**
+
+Cria um diretório como:
+
+```
+~/PHOENIX_[ID]
+```
+
+Cada instância possui volumes Docker únicos, evitando colisões de dados.
+
+### Configuração Automática do LNbits
+
+O script `kix_phoenixd.sh` configura automaticamente o **LNbits** com o **endpoint da API do Phoenixd e a senha correta**.
+
+Após o deploy:
+
+* O LNbits já está conectado ao nó Phoenix
+* A carteira já está pronta para **gerar invoices Lightning imediatamente**
+* Nenhuma configuração manual de API é necessária
+
+### Importante
+
+O Phoenix abre automaticamente seu **primeiro canal Lightning** quando a carteira recebe fundos.
+
+⚠️ Os **primeiros ~20.000 sats** são usados pela **ACINQ** para abrir o canal inicial.
+
+Por isso é **fundamental guardar com segurança as palavras seed do Phoenix**.  
+A seed é a única forma de recuperar a carteira e os fundos caso o servidor ou nó seja perdido.
+
+**Credenciais**
+
+O script gera:
+
+* uma **senha de API de 16 caracteres hexadecimais**
+* arquivo `.env`
+* `env_backup.txt`
+
+**Descoberta**
+
+O script varre os volumes Docker para localizar:
+
+```
+seed.dat
+```
+
+e imprime o endereço **.onion do Tor** gerado.
+
+---
+
+# 2.2 Método Soberano (Tor + Alby Hub)
+
+Esta é a configuração de **máxima soberania**.
+
+Ela executa:
+
+* LNbits
+* Serviço oculto do Tor
+* Backend de carteira **Alby Hub**
+
+O LNbits deve ser conectado ao Alby Hub usando a **chave Nostr**.
+
+### Configuração do AlbyHub
+
+1. Abra o **Alby Hub**
+2. Copie sua **chave privada Nostr**
+3. Cole nas **configurações do LNbits**
+4. Isso conecta o LNbits à carteira do Alby Hub
+
+### Executar
+
+```bash
 sudo chmod +x kix_tor_sovereign.sh
+```
+
+```bash
 ./kix_tor_sovereign.sh 1
+```
 
-🌐 **Como Acessar:**  
-Como essa infraestrutura é focada em privacidade, utilize o **Navegador Tor**. Cole as URLs `.onion` exibidas ao final do script. Aguarde 1–2 minutos para propagação.
+### Acesso
+
+Use o **Tor Browser** e abra o endereço `.onion` exibido ao final do script.
+
+Aguarde **1–2 minutos** para propagação do circuito Tor.
 
 ---
 
-### 2.2 Método VPS Dedicada (Clearnet)
+# 2.3 Método VPS Dedicado (Clearnet)
 
-Use quando a VPS for exclusivamente para o KIX e você desejar desempenho máximo na Porta 80.
+Use este método quando o VPS for **dedicado exclusivamente ao KIX** e você quiser **máximo desempenho na porta 80**.
 
-Execute:
+### Executar
 
+```bash
 sudo chmod +x kix_vps_dedicated.sh
+```
+
+```bash
 ./kix_vps_dedicated.sh 1
+```
 
 ---
 
-### 2.3 Método Compartilhado/Ponte (Híbrido em Duas Etapas)
+# 2.4 Método VPS Compartilhado + Bridge (Híbrido)
 
-Hospede em hardware local (NATado/oculto), mas acesse via uma VPS Pública limpa como proxy através do Tailscale.
+Esta arquitetura permite rodar o **nó Lightning em casa** enquanto expõe os serviços através de um **VPS público**.
 
-**Passo 1: No seu nó local (Casa/Oculto)**
+Os scripts devem ser executados **nesta ordem**:
 
-./kix_vps_shared.sh 1  # Executa na Porta 8001
+| Passo | Script | Função |
+|---|---|---|
+| 1 | `kix_vps_shared.sh` | Implanta o gateway público no VPS |
+| 2 | `kix_vps_bridge.sh` | Conecta o nó doméstico ao VPS |
 
-**Passo 2: Na sua VPS pública**
+Isso cria a seguinte topologia híbrida:
 
+```
+Home Node → Secure Tunnel → Public VPS Gateway
+```
+
+### Requisito WireGuard / Tailscale
+
+Essa bridge foi projetada para operar sobre um **túnel baseado em WireGuard** (por exemplo **Tailscale**).
+
+O **usuário deve configurar manualmente** a conexão WireGuard/Tailscale entre o VPS e a máquina doméstica antes de executar a bridge.
+
+⚠️ Os scripts do KIX **não configuram automaticamente a rede WireGuard**.
+
+Eles assumem que o túnel seguro já existe.
+
+### Executar
+
+```bash
+sudo chmod +x kix_vps_shared.sh
+```
+
+```bash
+./kix_vps_shared.sh
+```
+
+Depois iniciar a bridge:
+
+```bash
 sudo chmod +x kix_vps_bridge.sh
-./kix_vps_bridge.sh    # Mapeia VPS:80 -> Local:8001 (via Tailscale)
+```
+
+```bash
+./kix_vps_bridge.sh
+```
 
 ---
 
-### 3. Provisionando uma Instância
+# 🧰 Gerenciamento e Monitoramento
 
-Para implantar ou redefinir uma instância específica (por exemplo, instância número 7), execute o script desejado seguido pelo ID.
+## Verificar carga do sistema
 
-Exemplo:
+Ver CPU, memória e uptime:
 
-./kix_tor_sovereign.sh 7
-
----
-
-## 🧰 Stack Tecnológica
-* **Dashboard:** Homepage
-* **Engine Lightning:** LNbits
-* **Gerenciamento de Chaves:** Alby Hub
-* **Rede:** Tor / Nginx / Tailscale Mesh
-* **Orquestração:** Docker Compose
+```bash
+htop
+```
 
 ---
 
-## 🔐 Aviso de Segurança
+## Monitorar recursos dos containers
 
-O KIX é uma ferramenta de autonomia financeira. Os usuários são responsáveis por suas próprias chaves e conformidade legal.  
+Ver tráfego de rede e I/O de disco em tempo real:
 
-**Sem suas chaves, sem suas moedas. Sem seu nó, sem suas regras.**
+```bash
+sudo docker stats
+```
 
 ---
 
-## 📦 Metadados do Repositório
-* **Nome do Repositório:** kix-protocol-suite
-* **Tags:** bitcoin, lightning-network, soberania, pix-brasil, lnbits, privacidade, tecnologia-libertária, autocustódia
+## Limpar volumes Docker não utilizados
+
+Remover volumes antigos de experimentos:
+
+```bash
+sudo docker volume prune -f
+```
+
+---
+
+# 🔐 Aviso de Segurança
+
+KIX é uma ferramenta de autonomia financeira.
+
+Os usuários são responsáveis por:
+
+* suas **chaves**
+* a **segurança do nó**
+* sua **conformidade legal**
+
+**Not your keys, not your coins.  
+Not your node, not your rules.**
+
+---
+
+# 📦 Metadados do Repositório
+
+**Repositório:** `kix-protocol-suite`
+
+**Tópicos**
+
+```
+bitcoin
+lightning-network
+lnbits
+phoenixd
+albyhub
+pix-brazil
+self-custody
+privacy
+sovereignty
+```
