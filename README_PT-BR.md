@@ -196,6 +196,40 @@ Aguarde **1–2 minutos** para propagação do circuito Tor.
 
 ---
 
+## 2.2.1 Método Multi-Instância com Bind Mount
+
+Esta é a evolução do Método Soberano, projetada especificamente para alta disponibilidade e backups facilitados. Diferente dos volumes padrão do Docker, este método utiliza Bind Mounts, mapeando os dados dos containers diretamente para pastas visíveis no seu diretório home.
+
+### Principais Vantagens:
+
+- **Visibilidade de Dados:** Todos os bancos de dados Lightning e chaves Tor são armazenados em `~/KIX_PROTOTIPO[ID]/data`.
+- **Backups Simples:** Você pode fazer o backup de todo o seu nó apenas copiando uma pasta local, sem comandos complexos de exportação de volume.
+- **Robustez:** Evita a perda de dados durante atualizações do Docker ou migrações de containers.
+
+### Implantação:
+
+```bash
+sudo chmod +x kix_multi_tor_bind_mount.sh
+./kix_multi_tor_bind_mount.sh 9
+```
+
+### Estrutura de Pastas Criada:
+
+O script organiza automaticamente sua soberania:
+
+- `~/KIX_PROTOTIPO9/data/lnbits`: Bancos de dados SQLite e extensões.
+- `~/KIX_PROTOTIPO9/data/alby`: Suas chaves e configurações do Alby Hub.
+- `~/KIX_PROTOTIPO9/data/tor`: Endereços `.onion` permanentes (não mudam se o container reiniciar).
+
+### Pós-Instalação:
+
+Após o script exibir seus links `.onion`, lembre-se de:
+
+- Acessar seu Alby Hub via link Tor.
+- Conectá-lo ao LNbits usando o Nostr Wallet Connect (NWC) ou a chave interna da conta.
+
+Seus dados agora são persistentes e estão fisicamente em `~/KIX_PROTOTIPO9`.
+
 # 2.3 Método VPS Dedicado (Clearnet)
 
 Use este método quando o VPS for **dedicado exclusivamente ao KIX** e você quiser **máximo desempenho na porta 80**.
