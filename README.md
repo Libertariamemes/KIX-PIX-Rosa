@@ -82,7 +82,7 @@ Docker must be installed and running before executing any deployment scripts.
 | :--- | :--- | :--- |
 | 1. **Sovereign** | kix_tor_sovereign.sh | 🌑 Maximum Secession, Tor (.onion). Runs LNbits with **Alby Hub**. Requires configuring the **Nostr key from AlbyHub inside LNbits**. |
 | 2. **Phoenixd** | kix_phoenixd.sh | 🔥 Ultra-lightweight multi-instance Phoenix node + LNbits + Tor. |
-| 3. **Dedicated VPS** | kix_vps_dedicated.sh | 🌍 Public clearnet deployment on a dedicated VPS (Port 80). |
+| 3. **Clearnet VPS** | kix_vps_dedicated.sh | 🌍 Public clearnet deployment on a dedicated VPS (Port 80). |
 
 ---
 
