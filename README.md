@@ -83,7 +83,6 @@ Docker must be installed and running before executing any deployment scripts.
 | 1. **Sovereign** | kix_tor_sovereign.sh | 🌑 Maximum Secession, Tor (.onion). Runs LNbits with **Alby Hub**. Requires configuring the **Nostr key from AlbyHub inside LNbits**. |
 | 2. **Phoenixd** | kix_phoenixd.sh | 🔥 Ultra-lightweight multi-instance Phoenix node + LNbits + Tor. |
 | 3. **Dedicated VPS** | kix_vps_dedicated.sh | 🌍 Public clearnet deployment on a dedicated VPS (Port 80). |
-| 4. **Shared VPS + Bridge** | kix_vps_shared.sh + kix_vps_bridge.sh | 🌉 Hybrid architecture exposing a home node through a VPS using a secure tunnel. |
 
 ---
 
@@ -244,67 +243,6 @@ sudo chmod +x kix_vps_dedicated.sh
 
 ```bash
 ./kix_vps_dedicated.sh 1
-```
-
----
-
-# 2.4 Shared VPS + Bridge Method (Hybrid)
-
-This architecture allows you to run the **Lightning node at home** while exposing services through a **public VPS gateway**.
-
-The scripts must be executed **in this order**:
-
-| Step | Script | Purpose |
-|---|---|---|
-| 1 | `kix_vps_shared.sh` | Deploys the public gateway on the VPS |
-| 2 | `kix_vps_bridge.sh` | Connects the home node to the VPS |
-
-This creates a hybrid topology:
-
-```
-Home Node → Secure Tunnel → Public VPS Gateway
-```
-
-### WireGuard / Tailscale Requirement
-
-This bridge is designed to operate over a **WireGuard-based tunnel** (for example **Tailscale**).
-
-The **user must configure the WireGuard/Tailscale connection manually** between the VPS and the home machine before running the bridge.
-
-⚠️ The KIX scripts **do not configure the WireGuard network automatically**.
-
-They assume the secure tunnel already exists.
-
-### Run
-
-```bash
-sudo chmod +x kix_vps_shared.sh
-```
-
-```bash
-./kix_vps_shared.sh
-```
-
-Then start the bridge:
-
-```bash
-sudo chmod +x kix_vps_bridge.sh
-```
-
-```bash
-./kix_vps_bridge.sh
-```
-
----
-
-# 🧰 Management & Monitoring
-
-## Check System Load
-
-View CPU cores, memory usage, and uptime:
-
-```bash
-htop
 ```
 
 ---
